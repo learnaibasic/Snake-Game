@@ -60,6 +60,7 @@
         };
         let score = 0;
         let gameInterval;
+        let gameOver = false;
 
         document.addEventListener("keydown", changeDirection);
         startButton.addEventListener("click", startGame);
@@ -83,12 +84,15 @@
             };
             canvas.style.display = "block";
             startButton.style.display = "none";
+            gameOver = false;
 
             if (gameInterval) clearInterval(gameInterval);
             gameInterval = setInterval(draw, 150); // Adjusted speed
         }
 
         function draw() {
+            if (gameOver) return;
+
             // Clear canvas
             ctx.fillStyle = "#343a40";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -133,8 +137,12 @@
                 head.y >= canvas.height ||
                 snake.some(segment => segment.x === head.x && segment.y === head.y)
             ) {
+                gameOver = true;
+                clearInterval(gameInterval);
                 alert("Game Over! Your Score: " + score);
-                document.location.reload();
+                startButton.style.display = "block";
+                canvas.style.display = "none";
+                return;
             }
 
             snake.unshift(head);
